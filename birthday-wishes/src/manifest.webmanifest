@@ -1,0 +1,23 @@
+{
+  "name": "WishCraft — Birthday Wishes",
+  "short_name": "WishCraft",
+  "description": "Interactive Demon Slayer birthday wish for Satyam Gupta",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#ff4500",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["entertainment", "social"],
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "params": { "url": "shared_url" }
+  }
+}

@@ -919,3 +919,77 @@ $font-body:    'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   .stat.divider { display: none; }
   .form-pills { gap: 0.4rem; }
 }
+
+// ── Mega / Finisher slash ─────────────────────────────────────────────────────
+.sword-slash.mega {
+  height: 5px !important;
+  opacity: 1;
+  filter: blur(0.5px) brightness(1.8);
+  box-shadow: 0 0 18px var(--slash-color), 0 0 40px var(--slash-color);
+}
+
+.mega-active .slash-layer { z-index: 50; }
+
+.finisher-active .ma-wrapper { animation: finisher-flash 0.3s ease; }
+
+@keyframes finisher-flash {
+  0%, 100% { filter: brightness(1); }
+  50%       { filter: brightness(2.5) saturate(2); }
+}
+
+// ── Mobile FAB row (Share + Fullscreen) ───────────────────────────────────────
+.mobile-fab-row {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  opacity: 0;
+  transform: translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: none;
+
+  &.fab-visible {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+}
+
+.fab-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.2);
+  background: rgba(10,10,20,0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+  color: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+
+  &:active {
+    transform: scale(0.88);
+    box-shadow: 0 0 20px var(--form-color), 0 0 40px var(--form-glow);
+    border-color: var(--form-color);
+  }
+
+  .fab-icon { font-size: 1.4rem; line-height: 1; }
+  .fab-label { font-size: 0.55rem; letter-spacing: 0.05em; font-family: 'Inter', sans-serif; opacity: 0.8; }
+}
+
+// ── Hint text ─────────────────────────────────────────────────────────────────
+.hint-text {
+  strong { color: var(--form-color); font-weight: 700; }
+}
+

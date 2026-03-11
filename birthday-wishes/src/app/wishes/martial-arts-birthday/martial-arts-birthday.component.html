@@ -1,9 +1,11 @@
 <div
   #wrapper
-  [ngClass]="'ma-wrapper ' + activeForm.bgClass + (shakeActive ? ' shake' : '')"
+  [ngClass]="'ma-wrapper ' + activeForm.bgClass + (shakeActive ? ' shake' : '') + (megaSlashActive ? ' mega-active' : '') + (doubleTapFinisherActive ? ' finisher-active' : '')"
   [style.--form-color]="activeForm.color"
   [style.--form-glow]="activeForm.glowColor"
   *ngIf="config"
+  (touchstart)="onWrapperTouchStart($event)"
+  (touchend)="onWrapperTouchEnd($event)"
 >
 
   <!-- Confetti overlay -->
@@ -57,6 +59,18 @@
   <!-- Kiai popup -->
   <div class="kiai-popup" [class.visible]="showKiai" [style.color]="activeForm.color" aria-live="polite">
     {{ kiaiWord }}
+  </div>
+
+  <!-- Mobile FAB row: Share + Fullscreen -->
+  <div class="mobile-fab-row" [class.fab-visible]="heroVisible">
+    <button class="fab-btn fab-share" (click)="shareWish(); $event.stopPropagation()" type="button" aria-label="Share this wish">
+      <span class="fab-icon">📤</span>
+      <span class="fab-label">Share</span>
+    </button>
+    <button class="fab-btn fab-fullscreen" (click)="toggleFullscreen(); $event.stopPropagation()" type="button" aria-label="Toggle fullscreen">
+      <span class="fab-icon">{{ isFullscreen ? '⊡' : '⛶' }}</span>
+      <span class="fab-label">{{ isFullscreen ? 'Exit' : 'Full' }}</span>
+    </button>
   </div>
 
   <!-- Main content -->
@@ -142,7 +156,7 @@
     <!-- Tap hint -->
     <div class="punch-zone-hint" [class.fade-in]="cardVisible">
       <span class="hint-icon">👆</span>
-      <p class="hint-text">Tap anywhere to slash &amp; charge!</p>
+      <p class="hint-text">Tap · <strong>2× tap</strong> Finisher · <strong>Hold</strong> Mega Slash · <strong>2 fingers</strong> Dual Strike · <strong>Shake</strong> Total Concentration!</p>
     </div>
 
     <!-- Message cards -->
