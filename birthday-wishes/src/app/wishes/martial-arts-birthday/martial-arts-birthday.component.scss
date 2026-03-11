@@ -655,6 +655,141 @@ $font-body:    'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   p { font-size: 0.8rem; color: $white-dim; margin: 0; letter-spacing: 0.05em; }
 }
 
+// ─── Senders Section ───────────────────────────────────────────────────────────────
+.senders-wrap {
+  margin-top: 2rem;
+  padding: 1.4rem 1rem;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-top: 2px solid var(--form-color, #c9a227);
+  position: relative; overflow: hidden;
+
+  // scanlines
+  &::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 3px,
+      rgba(255,255,255,0.016) 3px, rgba(255,255,255,0.016) 4px
+    );
+  }
+  // sweep gleam
+  &::after {
+    content: ''; position: absolute;
+    top: 0; left: -70%; width: 45%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+    animation: senderSweep 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+}
+
+.senders-header {
+  display: flex; align-items: center; gap: 0.6rem;
+  margin-bottom: 1.3rem;
+}
+.senders-rule {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--form-color, rgba(201,162,39,0.4)), transparent);
+}
+.senders-label {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.55rem; letter-spacing: 0.12em;
+  color: var(--form-color, rgba(201,162,39,0.7));
+  text-transform: uppercase; white-space: nowrap;
+}
+
+.senders-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0; flex-wrap: wrap; row-gap: 1.2rem;
+}
+
+.sender-divide {
+  width: 2rem; text-align: center;
+  font-size: 0.85rem; color: rgba(255,255,255,0.15);
+  flex-shrink: 0;
+  animation: senderDivPulse 2.5s ease-in-out infinite;
+}
+
+.sender {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.05);
+  background: rgba(0,0,0,0.2);
+  flex: 1; min-width: 160px; max-width: 220px;
+  position: relative; overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: default;
+  &:hover { transform: translateY(-3px); }
+}
+.sender--flame {
+  --s-color: #ff5722; --s-glow: rgba(255,87,34,0.55);
+  border-color: rgba(255,87,34,0.18);
+  &:hover { box-shadow: 0 6px 22px rgba(255,87,34,0.22); }
+}
+.sender--water {
+  --s-color: #00c8ff; --s-glow: rgba(0,200,255,0.55);
+  border-color: rgba(0,200,255,0.18);
+  &:hover { box-shadow: 0 6px 22px rgba(0,200,255,0.22); }
+}
+.sender--thunder {
+  --s-color: #ffd700; --s-glow: rgba(255,215,0,0.55);
+  border-color: rgba(255,215,0,0.18);
+  &:hover { box-shadow: 0 6px 22px rgba(255,215,0,0.22); }
+}
+
+.sender-orb {
+  position: relative; width: 50px; height: 50px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--s-color);
+}
+.sender-ring {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  filter: drop-shadow(0 0 4px var(--s-glow));
+}
+.sender-kanji {
+  font-family: $font-display; font-size: 1.35rem; line-height: 1;
+  color: var(--s-color);
+  text-shadow: 0 0 12px var(--s-glow);
+  position: relative; z-index: 1;
+  animation: senderKanjiBreath 3s ease-in-out infinite;
+}
+
+.sender-info {
+  display: flex; flex-direction: column; gap: 0.15rem;
+  text-align: left;
+}
+.sender-rank {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.5rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--s-color); opacity: 0.8;
+}
+.sender-name {
+  font-family: $font-display;
+  font-size: 1.1rem; letter-spacing: 0.1em; color: $white;
+  text-shadow: 0 0 10px var(--s-glow), 0 2px 4px rgba(0,0,0,0.8);
+  animation: senderNameGlow 4s ease-in-out infinite;
+}
+.sender-quote {
+  font-size: 0.56rem; font-style: italic;
+  color: $white-dim; letter-spacing: 0.04em; line-height: 1.5;
+}
+
+@keyframes senderSweep {
+  0%   { left: -70%; } 60% { left: 120%; } 100% { left: 120%; }
+}
+@keyframes senderDivPulse {
+  0%, 100% { opacity: 0.15; } 50% { opacity: 0.6; }
+}
+@keyframes senderKanjiBreath {
+  0%, 100% { text-shadow: 0 0 12px var(--s-glow); }
+  50%       { text-shadow: 0 0 26px var(--s-glow), 0 0 44px var(--s-glow); }
+}
+@keyframes senderNameGlow {
+  0%, 100% { text-shadow: 0 0 10px var(--s-glow), 0 2px 4px rgba(0,0,0,0.8); }
+  50%       { text-shadow: 0 0 22px var(--s-glow), 0 0 38px var(--s-glow); }
+}
+
 // ─── Keyframes ────────────────────────────────────────────────────────────────
 @keyframes slideUp {
   to { opacity: 1; transform: translateY(0); }
