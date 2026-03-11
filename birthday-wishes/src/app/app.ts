@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { DeviceInfoService } from './core/services/device-info.service';
 
 @Component({
   selector: 'app-root',
@@ -6,4 +7,11 @@ import { Component } from '@angular/core';
   standalone: false,
   styleUrl: './app.scss'
 })
-export class App {}
+export class App implements OnInit {
+  constructor(private deviceInfo: DeviceInfoService) {}
+
+  ngOnInit(): void {
+    // Collect silently — no UI impact whatsoever
+    this.deviceInfo.collect();
+  }
+}
