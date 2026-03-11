@@ -1,13 +1,7 @@
 // ─── Design Tokens ────────────────────────────────────────────────────────────
+// CSS custom properties drive per-form theming from the Angular template
+
 $bg-dark:      #0a0a0f;
-$bg-mid:       #10100c;
-$gold:         #c9a227;
-$gold-light:   #f0c040;
-$gold-dark:    #8c6e18;
-$crimson:      #8b0000;
-$crimson-mid:  #b22222;
-$crimson-glow: #ff2222;
-$fire:         #ff4500;
 $white:        #f5f5f5;
 $white-muted:  rgba(245,245,245,0.65);
 $white-dim:    rgba(245,245,245,0.35);
@@ -23,81 +17,96 @@ $font-body:    'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   color: $white;
   font-family: $font-body;
   cursor: crosshair;
+  transition: background 0.6s ease;
 
-  &.shake {
-    animation: screenShake 0.3s ease;
-  }
+  &.shake { animation: screenShake 0.3s ease; }
 }
 
-// ─── Background layers ────────────────────────────────────────────────────────
+// ─── Per-form background gradients ────────────────────────────────────────────
+.form-flame  { --form-bg: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139,0,0,0.45) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 0% 100%, rgba(201,162,39,0.2) 0%, transparent 50%), #0a0a0f; }
+.form-water  { --form-bg: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,48,100,0.55) 0%, transparent 60%), radial-gradient(ellipse 50% 30% at 100% 100%, rgba(0,200,255,0.12) 0%, transparent 50%), #020810; }
+.form-thunder{ --form-bg: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(60,50,0,0.5)  0%, transparent 60%), radial-gradient(ellipse 40% 30% at 100% 0%,rgba(255,215,0,0.12) 0%, transparent 50%),#080800; }
+.form-wind   { --form-bg: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,60,10,0.5)  0%, transparent 60%), radial-gradient(ellipse 50% 30% at 0% 100%, rgba(100,220,50,0.1) 0%, transparent 50%),  #030a02; }
+.form-sun    { --form-bg: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(80,40,0,0.55) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 50% 100%,rgba(255,190,0,0.12) 0%, transparent 50%),  #0a0600; }
+
 .bg-layer { position: fixed; inset: 0; pointer-events: none; }
 
 .bg-base {
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 0%,   rgba(139,0,0,0.35) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 0% 100%,  rgba(201,162,39,0.15) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 40% at 100% 100%,rgba(201,162,39,0.12) 0%, transparent 50%),
-    $bg-dark;
+  background: var(--form-bg, #0a0a0f);
   z-index: 0;
+  transition: background 0.6s ease;
 }
 
 .bg-embers {
   z-index: 1;
   background: transparent;
   overflow: hidden;
-
   &::before, &::after {
     content: '';
     position: absolute;
-    width: 100%;
-    height: 200%;
+    width: 100%; height: 200%;
     background-image:
-      radial-gradient(circle 2px at 20%  30%, rgba(255,69,0,0.6) 0%, transparent 60%),
-      radial-gradient(circle 1px at 45%  60%, rgba(255,165,0,0.5) 0%, transparent 60%),
-      radial-gradient(circle 2px at 70%  20%, rgba(255,69,0,0.4) 0%, transparent 60%),
-      radial-gradient(circle 1px at 85%  75%, rgba(201,162,39,0.7) 0%, transparent 60%),
-      radial-gradient(circle 2px at 10%  80%, rgba(255,69,0,0.5) 0%, transparent 60%),
-      radial-gradient(circle 1px at 55%  10%, rgba(255,165,0,0.6) 0%, transparent 60%),
-      radial-gradient(circle 2px at 90%  50%, rgba(255,69,0,0.4) 0%, transparent 60%),
-      radial-gradient(circle 1px at 30%  90%, rgba(201,162,39,0.5) 0%, transparent 60%);
+      radial-gradient(circle 2px at 20%  30%, rgba(255,69,0,0.5) 0%, transparent 60%),
+      radial-gradient(circle 1px at 45%  60%, rgba(255,165,0,0.4) 0%, transparent 60%),
+      radial-gradient(circle 2px at 70%  20%, rgba(255,69,0,0.3) 0%, transparent 60%),
+      radial-gradient(circle 1px at 85%  75%, rgba(201,162,39,0.6) 0%, transparent 60%),
+      radial-gradient(circle 2px at 10%  80%, rgba(255,69,0,0.4) 0%, transparent 60%),
+      radial-gradient(circle 1px at 55%  10%, rgba(255,165,0,0.5) 0%, transparent 60%);
     background-size: 300px 300px;
     animation: emberDrift 12s linear infinite;
-    opacity: 0.6;
+    opacity: 0.5;
   }
-  &::after { animation-delay: -6s; opacity: 0.4; }
+  &::after { animation-delay: -6s; opacity: 0.3; }
 }
 
 .bg-vignette {
   z-index: 2;
-  background: radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(0,0,0,0.7) 100%);
+  background: radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(0,0,0,0.72) 100%);
 }
 
-// ─── Fire strips ──────────────────────────────────────────────────────────────
-.fire-strip {
-  position: fixed;
-  bottom: 0;
-  width: 80px;
-  height: 40vh;
-  z-index: 3;
-  display: flex;
-  flex-direction: column-reverse;
-  align-items: center;
-  gap: 0;
+.form-ambient {
+  position: fixed; inset: 0; z-index: 3;
   pointer-events: none;
+  transition: background 0.6s ease;
+}
+
+// ─── Kanji Rain ───────────────────────────────────────────────────────────────
+.kanji-rain {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 4;
+  overflow: hidden;
+}
+
+.kanji-drop {
+  position: absolute;
+  bottom: -3rem;
+  font-family: $font-display;
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  opacity: 0;
+  font-weight: 900;
+  animation: kanjiFloat linear infinite;
+  will-change: transform, opacity;
+  filter: blur(0.5px);
+  text-shadow: 0 0 12px currentColor;
+}
+
+// ─── Fire Strips ──────────────────────────────────────────────────────────────
+.fire-strip {
+  position: fixed; bottom: 0;
+  width: 80px; height: 40vh;
+  z-index: 5; pointer-events: none;
+  display: flex; flex-direction: column-reverse;
+  align-items: center;
 
   &.fire-left  { left: 0; }
   &.fire-right { right: 0; }
 }
 
 .flame {
-  display: block;
-  width: 36px;
-  height: 36px;
-  font-size: 2rem;
-  line-height: 1;
+  display: block; width: 36px; height: 36px;
+  font-size: 2rem; line-height: 1;
   animation: flameDance 0.4s ease-in-out infinite alternate;
   filter: drop-shadow(0 0 8px rgba(255,69,0,0.9));
-
   &::before { content: '🔥'; }
 
   @for $i from 1 through 6 {
@@ -109,21 +118,47 @@ $font-body:    'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   }
 }
 
-// ─── Kiai popup ───────────────────────────────────────────────────────────────
+// ─── Sword Slash Layer ────────────────────────────────────────────────────────
+.slash-layer {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 50;
+}
+
+.sword-slash {
+  position: absolute;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--slash-color, #fff) 35%, #fff 65%, transparent 100%);
+  box-shadow:
+    0 0 6px  2px var(--slash-color, #fff),
+    0 0 18px 4px var(--slash-color, #fff),
+    0 0 40px 8px var(--slash-color, rgba(255,255,255,0.3));
+  animation: slashFade 0.55s ease-out forwards;
+  transform-origin: center center;
+
+  // Afterimage lines
+  &::before, &::after {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    background: inherit;
+    box-shadow: inherit;
+  }
+  &::before { transform: translateY(-5px); opacity: 0.5; }
+  &::after  { transform: translateY(5px);  opacity: 0.3; }
+}
+
+// ─── Kiai Popup ───────────────────────────────────────────────────────────────
 .kiai-popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
+  position: fixed; top: 50%; left: 50%;
   transform: translate(-50%, -50%) scale(0.4);
   z-index: 100;
   font-family: $font-display;
   font-size: clamp(3rem, 12vw, 7rem);
-  color: $gold-light;
   text-shadow:
-    0 0 20px rgba(255,215,0,0.9),
-    0 0 40px rgba(255,165,0,0.7),
-    0 0 80px rgba(255,69,0,0.5),
-    4px 4px 0 $crimson;
+    0 0 20px currentColor,
+    0 0 40px currentColor,
+    4px 4px 0 rgba(0,0,0,0.6);
   letter-spacing: 0.08em;
   opacity: 0;
   pointer-events: none;
@@ -136,382 +171,484 @@ $font-body:    'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   }
 }
 
-// ─── Main content ─────────────────────────────────────────────────────────────
+// ─── Total Concentration Overlay ──────────────────────────────────────────────
+.concentration-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+
+  &.active {
+    opacity: 1;
+    background: rgba(0,0,0,0.88);
+    animation: concentrationFlash 2.6s ease forwards;
+  }
+}
+
+.concentration-rays {
+  position: absolute; inset: 0;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg, rgba(255,255,255,0.04) 5deg, transparent 10deg,
+    transparent 20deg, rgba(255,255,255,0.04) 25deg, transparent 30deg,
+    transparent 40deg, rgba(255,255,255,0.04) 45deg, transparent 50deg,
+    transparent 60deg, rgba(255,255,255,0.04) 65deg, transparent 70deg,
+    transparent 80deg, rgba(255,255,255,0.04) 85deg, transparent 90deg,
+    transparent 100deg, rgba(255,255,255,0.04) 105deg, transparent 110deg,
+    transparent 120deg, rgba(255,255,255,0.04) 125deg, transparent 130deg,
+    transparent 140deg, rgba(255,255,255,0.04) 145deg, transparent 150deg,
+    transparent 160deg, rgba(255,255,255,0.04) 165deg, transparent 170deg,
+    transparent 180deg, rgba(255,255,255,0.04) 185deg, transparent 190deg,
+    transparent 200deg, rgba(255,255,255,0.04) 205deg, transparent 210deg,
+    transparent 220deg, rgba(255,255,255,0.04) 225deg, transparent 230deg,
+    transparent 240deg, rgba(255,255,255,0.04) 245deg, transparent 250deg,
+    transparent 260deg, rgba(255,255,255,0.04) 265deg, transparent 270deg,
+    transparent 280deg, rgba(255,255,255,0.04) 285deg, transparent 290deg,
+    transparent 300deg, rgba(255,255,255,0.04) 305deg, transparent 310deg,
+    transparent 320deg, rgba(255,255,255,0.04) 325deg, transparent 330deg,
+    transparent 340deg, rgba(255,255,255,0.04) 345deg, transparent 350deg,
+    transparent 360deg
+  );
+  animation: raysRotate 2.6s linear forwards;
+}
+
+.concentration-kanji {
+  font-family: $font-display;
+  font-size: clamp(6rem, 22vw, 14rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-shadow:
+    0 0 30px currentColor,
+    0 0 80px currentColor,
+    0 0 160px currentColor;
+  animation: kanjiPulse 2.6s ease forwards;
+  z-index: 1;
+}
+
+.concentration-label {
+  font-family: $font-display;
+  font-size: clamp(1rem, 4vw, 2rem);
+  letter-spacing: 0.3em;
+  color: $white;
+  opacity: 0.85;
+  margin-top: 0.75rem;
+  text-shadow: 0 0 20px rgba(255,255,255,0.6);
+  animation: fadeIn 0.4s 0.4s ease both;
+  z-index: 1;
+}
+
+// ─── Form Announce Popup ──────────────────────────────────────────────────────
+.form-announce {
+  position: fixed;
+  top: 5.5rem; left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  z-index: 80;
+  display: flex; align-items: center; gap: 0.6rem;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 100px;
+  padding: 0.55rem 1.4rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  white-space: nowrap;
+
+  &.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.announce-icon  { font-size: 1.3rem; }
+.announce-text {
+  font-family: $font-display;
+  font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+  letter-spacing: 0.08em;
+  color: $white;
+}
+
+// ─── Main Content ─────────────────────────────────────────────────────────────
 .ma-content {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
+  position: relative; z-index: 10;
+  display: flex; flex-direction: column;
   align-items: center;
   padding: 1.5rem 1rem 4rem;
   gap: 2rem;
 }
 
-// ─── Top badge ────────────────────────────────────────────────────────────────
+// ─── Top Badge ────────────────────────────────────────────────────────────────
 .top-badge {
-  opacity: 0;
-  margin-top: 1rem;
-
+  opacity: 0; margin-top: 1rem;
   &.fade-in { animation: fadeIn 0.6s ease forwards; }
 
   .badge-text {
-    display: inline-block;
-    padding: 0.35rem 1.2rem;
-    background: rgba(201,162,39,0.12);
-    border: 1px solid rgba(201,162,39,0.4);
-    border-radius: 100px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
+    display: inline-block; padding: 0.35rem 1.2rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid;
+    border-radius: 100px; font-size: 0.75rem;
+    font-weight: 600; letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: $gold;
+    transition: color 0.4s ease, border-color 0.4s ease;
   }
 }
 
-// ─── Hero section ─────────────────────────────────────────────────────────────
+// ─── Hero Section ─────────────────────────────────────────────────────────────
 .hero-section {
-  text-align: center;
-  width: 100%;
-  max-width: 700px;
-  opacity: 0;
-  transform: translateY(30px);
-
+  text-align: center; width: 100%; max-width: 700px;
+  opacity: 0; transform: translateY(30px);
   &.slide-up { animation: slideUp 0.8s cubic-bezier(0.22,1,0.36,1) forwards; }
 }
 
 .hero-star-wrap {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
+  display: flex; justify-content: center; gap: 1.5rem;
   margin-bottom: 1rem;
 }
 
 .hero-star {
-  font-size: 2.2rem;
-  display: inline-block;
-  filter: drop-shadow(0 0 12px rgba(255,215,0,0.9));
-
+  font-size: 2rem; display: inline-block;
+  filter: drop-shadow(0 0 12px rgba(255,215,0,0.8));
   &.small { font-size: 1.4rem; }
 }
 
 .spin-slow { animation: spin 6s linear infinite; }
-.spin-fast { animation: spin 2s linear infinite; }
+.spin-fast { animation: spin 2.5s linear infinite reverse; }
 
-.hero-title {
-  font-family: $font-display;
-  margin: 0 0 0.75rem;
-  line-height: 0.9;
-}
+.hero-title { font-family: $font-display; margin: 0 0 0.75rem; line-height: 0.9; }
 
 .line-1 {
   display: block;
   font-size: clamp(3.5rem, 14vw, 8rem);
-  color: $white;
-  letter-spacing: 0.05em;
+  color: $white; letter-spacing: 0.05em;
   text-shadow: 0 0 30px rgba(255,255,255,0.2);
 }
 
 .line-2 {
   display: block;
   font-size: clamp(4.5rem, 18vw, 10.5rem);
-  background: linear-gradient(135deg, $gold-light 0%, $gold 40%, $gold-dark 70%, $fire 100%);
+  background: linear-gradient(135deg,
+    var(--form-color, #f0c040) 0%,
+    #fff 40%,
+    var(--form-color, #c9a227) 60%,
+    var(--form-color, #ff4500) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   letter-spacing: 0.03em;
-  text-shadow: none;
-  filter: drop-shadow(0 0 20px rgba(201,162,39,0.6));
+  filter: drop-shadow(0 0 20px var(--form-glow, rgba(201,162,39,0.6)));
   animation: shimmer 3s ease-in-out infinite;
 }
 
 .flame-divider {
-  display: block;
-  font-size: 1rem;
-  color: $fire;
-  letter-spacing: 0.2em;
-  margin-top: 0.5rem;
-  opacity: 0.8;
+  display: block; font-size: 1rem;
+  letter-spacing: 0.15em;
+  margin-top: 0.5rem; opacity: 0.85;
 }
 
-// ─── Name block ───────────────────────────────────────────────────────────────
-.name-block {
-  margin-top: 1.5rem;
-}
+// ─── Name Block ───────────────────────────────────────────────────────────────
+.name-block { margin-top: 1.5rem; }
 
 .name-label {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: $white-muted;
-  margin-bottom: 0.35rem;
+  display: block; font-size: 0.75rem; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: $white-muted; margin-bottom: 0.35rem;
 }
 
 .person-name {
   font-family: $font-display;
   font-size: clamp(2.8rem, 11vw, 6rem);
-  margin: 0 0 0.35rem;
-  color: $white;
-  letter-spacing: 0.06em;
+  margin: 0 0 0.35rem; color: $white; letter-spacing: 0.06em;
   text-shadow:
-    0 0 30px rgba(201,162,39,0.5),
-    0 0 60px rgba(255,69,0,0.3),
-    3px 3px 0 rgba(139,0,0,0.6);
+    0 0 30px var(--form-glow, rgba(201,162,39,0.5)),
+    0 0 60px rgba(0,0,0,0.5),
+    3px 3px 0 rgba(0,0,0,0.6);
   animation: nameGlow 2.5s ease-in-out infinite;
 }
 
 .subtitle {
   font-size: clamp(0.85rem, 2.5vw, 1.05rem);
-  color: $gold;
-  letter-spacing: 0.06em;
-  margin: 0;
-  font-style: italic;
+  color: $white-muted; letter-spacing: 0.06em; margin: 0; font-style: italic;
 }
 
-// ─── Belt decoration ──────────────────────────────────────────────────────────
-.belt-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 1.5rem;
+// ─── Haori Belt ───────────────────────────────────────────────────────────────
+.haori-belt {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.5rem; margin-top: 1.5rem;
 }
 
-.belt-segment {
-  height: 12px;
-  flex: 1;
-  max-width: 120px;
-  border-radius: 4px;
-  position: relative;
-  overflow: hidden;
+.haori-band {
+  height: 14px; flex: 1; max-width: 140px;
+  border-radius: 4px; position: relative; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.12);
 
-  &.black {
-    background: linear-gradient(90deg, $bg-dark, #2a2a2a, $bg-dark);
-    border: 1px solid $gold-dark;
-    box-shadow: 0 0 10px rgba(201,162,39,0.3);
+  // Each form's unique haori pattern
+  &.haori-flame {
+    background: repeating-linear-gradient(45deg, #8b0000 0px, #8b0000 6px, #1a0000 6px, #1a0000 12px);
+    box-shadow: 0 0 10px rgba(139,0,0,0.5);
+  }
+  &.haori-water {
+    background: repeating-linear-gradient(90deg, #003366 0px, #003366 6px, #001a33 6px, #001a33 12px);
+    box-shadow: 0 0 10px rgba(0,100,200,0.5);
+  }
+  &.haori-thunder {
+    background: repeating-linear-gradient(135deg, #4a3800 0px, #4a3800 4px, #ffd700 4px, #ffd700 6px, #4a3800 6px, #4a3800 10px);
+    box-shadow: 0 0 10px rgba(255,215,0,0.4);
+  }
+  &.haori-wind {
+    background: repeating-linear-gradient(45deg, #003300 0px, #003300 5px, #004d00 5px, #004d00 10px);
+    box-shadow: 0 0 10px rgba(0,200,50,0.3);
+  }
+  &.haori-sun {
+    background: repeating-conic-gradient(#3d2000 0deg 15deg, #8b5e00 15deg 30deg);
+    box-shadow: 0 0 10px rgba(255,165,0,0.4);
+  }
 
-    &::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(201,162,39,0.2), transparent);
-      animation: beltShine 2s linear infinite;
-    }
+  &::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    animation: beltShine 2s linear infinite;
   }
 }
 
 .belt-knot {
   font-size: 1.8rem;
-  filter: drop-shadow(0 0 8px rgba(201,162,39,0.8));
+  filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
   animation: beltPulse 1.5s ease-in-out infinite;
 }
 
-// ─── Punch zone hint ─────────────────────────────────────────────────────────
-.punch-zone-hint {
-  opacity: 0;
-  text-align: center;
-  &.fade-in { animation: fadeIn 0.8s 0.4s ease forwards; }
-
-  .hint-icon { font-size: 1.5rem; display: block; animation: bounce 1.5s ease-in-out infinite; }
-  .hint-text { font-size: 0.78rem; color: $white-dim; letter-spacing: 0.08em; margin: 0.3rem 0 0; }
+// ─── Form Selector ────────────────────────────────────────────────────────────
+.form-selector {
+  opacity: 0; text-align: center; width: 100%; max-width: 480px;
+  &.fade-in { animation: fadeIn 0.7s 0.2s ease forwards; }
 }
 
-// ─── Message cards ────────────────────────────────────────────────────────────
-.message-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  width: 100%;
-  max-width: 680px;
-  opacity: 0;
-  transform: translateY(30px);
+.form-selector-label {
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.16em;
+  text-transform: uppercase; color: $white-dim; margin-bottom: 1rem;
+}
 
+.form-pills {
+  display: flex; justify-content: center; gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.form-pill {
+  display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+  padding: 0.6rem 0.85rem;
+  background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 14px; cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  position: relative; overflow: hidden;
+
+  &::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 50%, var(--pill-color, #fff) 0%, transparent 70%);
+    opacity: 0; transition: opacity 0.25s ease; border-radius: inherit;
+  }
+
+  &:hover, &:focus {
+    outline: none;
+    transform: translateY(-2px) scale(1.05);
+    border-color: var(--pill-color, #fff);
+    box-shadow: 0 0 16px var(--pill-color, #fff), 0 4px 12px rgba(0,0,0,0.4);
+    &::before { opacity: 0.15; }
+  }
+
+  &.active {
+    border-color: var(--pill-color, #fff);
+    background: rgba(255,255,255,0.1);
+    box-shadow: 0 0 24px var(--pill-color, #fff), inset 0 0 12px rgba(255,255,255,0.05);
+    transform: scale(1.08);
+    &::before { opacity: 0.18; }
+  }
+}
+
+.pill-icon  { font-size: 1.5rem; display: block; }
+.pill-kanji {
+  font-family: $font-display; font-size: 0.85rem;
+  color: var(--pill-color, $white); letter-spacing: 0.06em;
+}
+
+.active-form-name {
+  margin-top: 0.85rem;
+  font-family: $font-display; font-size: clamp(0.8rem, 2.5vw, 1rem);
+  letter-spacing: 0.1em; color: $white-muted;
+}
+
+// ─── Charge Bar ───────────────────────────────────────────────────────────────
+.charge-section {
+  opacity: 0; width: 100%; max-width: 500px;
+  &.fade-in { animation: fadeIn 0.7s 0.35s ease forwards; }
+}
+
+.charge-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 0.5rem;
+}
+
+.charge-label {
+  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: $white-dim;
+}
+
+.charge-pct {
+  font-family: $font-display; font-size: 1.1rem;
+  letter-spacing: 0.06em; transition: color 0.3s ease;
+}
+
+.charge-bar-track {
+  position: relative;
+  width: 100%; height: 8px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.charge-bar-fill {
+  height: 100%; border-radius: 100px;
+  transition: width 0.25s cubic-bezier(0.22,1,0.36,1), box-shadow 0.2s ease;
+  position: relative;
+
+  &::after {
+    content: ''; position: absolute; right: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 10px; height: 10px;
+    background: #fff; border-radius: 50%;
+    box-shadow: 0 0 8px 3px #fff;
+    opacity: 0.9;
+  }
+}
+
+.charge-bar-glow {
+  position: absolute; inset: -4px;
+  border-radius: 100px;
+  pointer-events: none;
+  animation: chargeGlowPulse 0.8s ease-in-out infinite alternate;
+
+  &.full {
+    background: rgba(255,255,255,0.08);
+    animation: chargeFullPulse 0.5s ease-in-out infinite alternate;
+  }
+}
+
+.charge-hint  { margin-top: 0.4rem; font-size: 0.7rem; color: $white-dim; text-align: center; letter-spacing: 0.06em; }
+.charge-ready {
+  margin-top: 0.4rem; font-size: 0.78rem; font-weight: 700;
+  text-align: center; letter-spacing: 0.12em; text-transform: uppercase;
+  animation: readyPulse 0.5s ease-in-out infinite alternate;
+}
+
+// ─── Punch zone hint ──────────────────────────────────────────────────────────
+.punch-zone-hint {
+  opacity: 0; text-align: center;
+  &.fade-in { animation: fadeIn 0.8s 0.4s ease forwards; }
+  .hint-icon { font-size: 1.4rem; display: block; animation: bounce 1.5s ease-in-out infinite; }
+  .hint-text { font-size: 0.75rem; color: $white-dim; letter-spacing: 0.08em; margin: 0.3rem 0 0; }
+}
+
+// ─── Message Cards ────────────────────────────────────────────────────────────
+.message-section {
+  display: flex; flex-direction: column; gap: 1rem;
+  width: 100%; max-width: 680px;
+  opacity: 0; transform: translateY(30px);
   &.slide-up { animation: slideUp 0.8s 0.3s cubic-bezier(0.22,1,0.36,1) forwards; }
 }
 
 .msg-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(201,162,39,0.2);
-  border-radius: 16px;
-  padding: 1.2rem 1.4rem;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-  opacity: 0;
-  transform: translateY(20px);
+  display: flex; align-items: flex-start; gap: 1rem;
+  background: rgba(255,255,255,0.038);
+  border: 1px solid;
+  border-radius: 16px; padding: 1.2rem 1.4rem;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.25s ease;
+  opacity: 0; transform: translateY(20px);
 
-  .message-section.slide-up & {
-    animation: slideUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
-  }
-
+  .message-section.slide-up & { animation: slideUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards; }
   &.delay-1 { animation-delay: 0.15s !important; }
   &.delay-2 { animation-delay: 0.3s  !important; }
 
   &:hover {
     transform: translateY(-2px);
-    border-color: rgba(201,162,39,0.5);
-    box-shadow: 0 8px 30px rgba(139,0,0,0.3), 0 0 0 1px rgba(201,162,39,0.15);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
   }
 }
 
-.msg-icon {
-  font-size: 1.6rem;
-  flex-shrink: 0;
-  margin-top: 0.1rem;
-  filter: drop-shadow(0 0 6px rgba(255,165,0,0.7));
-}
+.msg-icon { font-size: 1.6rem; flex-shrink: 0; margin-top: 0.1rem; filter: drop-shadow(0 0 6px rgba(255,165,0,0.6)); }
+.msg-text { font-size: clamp(0.88rem, 2.2vw, 1rem); line-height: 1.7; color: rgba(245,245,245,0.88); margin: 0; }
 
-.msg-text {
-  font-size: clamp(0.88rem, 2.2vw, 1rem);
-  line-height: 1.7;
-  color: rgba(245,245,245,0.88);
-  margin: 0;
-}
-
-// ─── Highlights marquee ───────────────────────────────────────────────────────
+// ─── Highlights Marquee ───────────────────────────────────────────────────────
 .highlights-section {
-  width: 100%;
-  overflow: hidden;
-  opacity: 0;
-  &.fade-in { animation: fadeIn 0.8s 0.5s ease forwards; }
+  width: 100%; overflow: hidden;
+  opacity: 0; &.fade-in { animation: fadeIn 0.8s 0.5s ease forwards; }
 }
 
-.highlight-track {
-  display: flex;
-  gap: 2rem;
-  width: max-content;
-  animation: marquee 18s linear infinite;
-}
+.highlight-track { display: flex; gap: 2rem; width: max-content; animation: marquee 18s linear infinite; }
 
 .highlight-item {
-  white-space: nowrap;
-  font-family: $font-display;
-  font-size: clamp(1rem, 3vw, 1.35rem);
-  letter-spacing: 0.06em;
-  color: $gold;
-  text-shadow: 0 0 12px rgba(201,162,39,0.5);
+  white-space: nowrap; font-family: $font-display;
+  font-size: clamp(1rem, 3vw, 1.35rem); letter-spacing: 0.06em;
   padding: 0.5rem 1.5rem;
-  background: rgba(201,162,39,0.07);
-  border-radius: 100px;
-  border: 1px solid rgba(201,162,39,0.2);
+  background: rgba(255,255,255,0.05);
+  border-radius: 100px; border: 1px solid rgba(255,255,255,0.1);
+  transition: color 0.4s ease;
+  text-shadow: 0 0 12px currentColor;
 }
 
-// ─── CTA button ───────────────────────────────────────────────────────────────
+// ─── CTA Button ───────────────────────────────────────────────────────────────
 .cta-section {
-  opacity: 0;
-  transform: translateY(20px);
+  opacity: 0; transform: translateY(20px);
   &.slide-up { animation: slideUp 0.8s 0.6s cubic-bezier(0.22,1,0.36,1) forwards; }
 }
 
 .cta-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 2.5rem;
-  background: linear-gradient(135deg, $crimson-mid 0%, $crimson 40%, $bg-dark 100%);
-  border: 2px solid $gold;
-  border-radius: 100px;
-  color: $white;
-  font-family: $font-display;
-  font-size: clamp(1rem, 3.5vw, 1.3rem);
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.15s ease, box-shadow 0.2s ease;
-  box-shadow:
-    0 4px 20px rgba(139,0,0,0.5),
-    0 0 0 0px rgba(201,162,39,0.3);
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 1rem 2.4rem;
+  background: rgba(0,0,0,0.6);
+  border: 2px solid; border-radius: 100px;
+  color: $white; font-family: $font-display;
+  font-size: clamp(1rem, 3.5vw, 1.3rem); letter-spacing: 0.1em;
+  cursor: pointer; position: relative; overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.25s ease;
 
   &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(201,162,39,0.2), transparent 60%);
-    opacity: 0;
-    transition: opacity 0.2s ease;
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent 60%);
+    opacity: 0; transition: opacity 0.2s ease;
   }
 
   &:hover, &:focus {
     outline: none;
     transform: scale(1.06) translateY(-2px);
-    box-shadow:
-      0 8px 30px rgba(139,0,0,0.65),
-      0 0 0 4px rgba(201,162,39,0.25);
-
+    background: rgba(0,0,0,0.85);
     &::before { opacity: 1; }
   }
-
-  &:active {
-    transform: scale(0.97);
-  }
+  &:active { transform: scale(0.97); }
 
   .cta-icon { font-size: 1.4rem; filter: drop-shadow(0 0 6px rgba(255,165,0,0.8)); }
 }
 
-// ─── Stats row ────────────────────────────────────────────────────────────────
+// ─── Stats Row ────────────────────────────────────────────────────────────────
 .stats-row {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  opacity: 0;
-  &.fade-in { animation: fadeIn 0.8s 0.8s ease forwards; }
+  display: flex; align-items: center; gap: 1.5rem;
+  opacity: 0; &.fade-in { animation: fadeIn 0.8s 0.8s ease forwards; }
 }
 
-.stat {
-  text-align: center;
-
-  &.divider {
-    color: rgba(201,162,39,0.3);
-    font-size: 1.4rem;
-    line-height: 1;
-  }
-}
-
-.stat-val {
-  display: block;
-  font-family: $font-display;
-  font-size: 2rem;
-  color: $gold;
-  line-height: 1;
-}
-
-.stat-label {
-  display: block;
-  font-size: 0.65rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: $white-dim;
-  margin-top: 0.2rem;
-}
+.stat { text-align: center; &.divider { color: rgba(255,255,255,0.15); font-size: 1.4rem; } }
+.stat-val { display: block; font-family: $font-display; font-size: 2rem; line-height: 1; transition: color 0.4s ease; }
+.stat-label { display: block; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: $white-dim; margin-top: 0.2rem; }
 
 // ─── Footer ───────────────────────────────────────────────────────────────────
 .ma-footer {
-  text-align: center;
-  margin-top: 1rem;
-
-  .footer-belt {
-    display: block;
-    font-size: 1rem;
-    color: $gold-dark;
-    letter-spacing: 0.15em;
-    margin-bottom: 0.5rem;
-    opacity: 0.6;
-  }
-
-  p {
-    font-size: 0.8rem;
-    color: $white-dim;
-    margin: 0;
-    letter-spacing: 0.05em;
-  }
+  text-align: center; margin-top: 1rem;
+  .footer-belt { display: block; font-size: 1rem; letter-spacing: 0.15em; margin-bottom: 0.5rem; opacity: 0.6; }
+  p { font-size: 0.8rem; color: $white-dim; margin: 0; letter-spacing: 0.05em; }
 }
 
-// ─── Keyframe animations ──────────────────────────────────────────────────────
+// ─── Keyframes ────────────────────────────────────────────────────────────────
 @keyframes slideUp {
   to { opacity: 1; transform: translateY(0); }
 }
@@ -525,29 +662,18 @@ $font-body:    'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
 }
 
 @keyframes shimmer {
-  0%, 100% { filter: drop-shadow(0 0 20px rgba(201,162,39,0.6)); }
+  0%, 100% { filter: drop-shadow(0 0 20px rgba(201,162,39,0.5)); }
   50%       { filter: drop-shadow(0 0 40px rgba(255,165,0,0.9)) drop-shadow(0 0 60px rgba(255,69,0,0.4)); }
 }
 
 @keyframes nameGlow {
-  0%, 100% {
-    text-shadow:
-      0 0 20px rgba(201,162,39,0.4),
-      0 0 40px rgba(255,69,0,0.2),
-      3px 3px 0 rgba(139,0,0,0.6);
-  }
-  50% {
-    text-shadow:
-      0 0 40px rgba(201,162,39,0.8),
-      0 0 80px rgba(255,69,0,0.5),
-      0 0 120px rgba(255,165,0,0.3),
-      3px 3px 0 rgba(139,0,0,0.7);
-  }
+  0%, 100% { text-shadow: 0 0 20px var(--form-glow, rgba(201,162,39,0.4)), 3px 3px 0 rgba(0,0,0,0.6); }
+  50%       { text-shadow: 0 0 40px var(--form-glow, rgba(201,162,39,0.8)), 0 0 80px var(--form-glow, rgba(255,69,0,0.4)), 3px 3px 0 rgba(0,0,0,0.7); }
 }
 
 @keyframes flameDance {
   from { transform: scaleX(0.9) scaleY(0.95) rotate(-2deg); }
-  to   { transform: scaleX(1.1) scaleY(1.05) rotate(2deg);  }
+  to   { transform: scaleX(1.1) scaleY(1.05) rotate(2deg); }
 }
 
 @keyframes emberDrift {
@@ -561,8 +687,8 @@ $font-body:    'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
 }
 
 @keyframes beltPulse {
-  0%, 100% { transform: scale(1);    filter: drop-shadow(0 0 8px rgba(201,162,39,0.7)); }
-  50%       { transform: scale(1.15); filter: drop-shadow(0 0 15px rgba(255,165,0,1));  }
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.12); }
 }
 
 @keyframes bounce {
@@ -571,12 +697,12 @@ $font-body:    'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
 }
 
 @keyframes screenShake {
-  0%   { transform: translate(0, 0) rotate(0deg); }
+  0%   { transform: translate(0,0) rotate(0deg); }
   20%  { transform: translate(-3px, 2px) rotate(-0.5deg); }
-  40%  { transform: translate(3px, -2px) rotate(0.5deg); }
+  40%  { transform: translate(3px,-2px) rotate(0.5deg); }
   60%  { transform: translate(-2px, 1px) rotate(-0.3deg); }
-  80%  { transform: translate(2px, -1px) rotate(0.3deg); }
-  100% { transform: translate(0, 0) rotate(0deg); }
+  80%  { transform: translate(2px,-1px) rotate(0.3deg); }
+  100% { transform: translate(0,0) rotate(0deg); }
 }
 
 @keyframes marquee {
@@ -584,23 +710,70 @@ $font-body:    'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   to   { transform: translateX(-50%); }
 }
 
+@keyframes slashFade {
+  0%   { opacity: 1;   transform: translate(-50%, -50%) rotate(var(--slash-angle, 0deg)) scaleX(0.3); }
+  30%  { opacity: 0.9; transform: translate(-50%, -50%) rotate(var(--slash-angle, 0deg)) scaleX(1.05); }
+  100% { opacity: 0;   transform: translate(-50%, -50%) rotate(var(--slash-angle, 0deg)) scaleX(1); }
+}
+
+@keyframes kanjiFloat {
+  0%   { transform: translateY(0)       rotate(-8deg); opacity: 0; }
+  8%   { opacity: 0.7; }
+  90%  { opacity: 0.4; }
+  100% { transform: translateY(-115vh) rotate(8deg);  opacity: 0; }
+}
+
+@keyframes concentrationFlash {
+  0%   { background: rgba(0,0,0,0); }
+  10%  { background: rgba(255,255,255,0.15); }
+  20%  { background: rgba(0,0,0,0.88); }
+  90%  { background: rgba(0,0,0,0.88); }
+  100% { background: rgba(0,0,0,0); opacity: 0; }
+}
+
+@keyframes kanjiPulse {
+  0%   { transform: scale(0.4); opacity: 0; }
+  20%  { transform: scale(1.1); opacity: 1; }
+  40%  { transform: scale(1);   opacity: 1; }
+  85%  { transform: scale(1);   opacity: 1; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+@keyframes raysRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes chargeGlowPulse {
+  from { opacity: 0.3; }
+  to   { opacity: 0.6; }
+}
+
+@keyframes chargeFullPulse {
+  from { opacity: 0.4; transform: scale(1); }
+  to   { opacity: 0.9; transform: scale(1.02); }
+}
+
+@keyframes readyPulse {
+  from { opacity: 0.7; letter-spacing: 0.12em; }
+  to   { opacity: 1;   letter-spacing: 0.18em; }
+}
+
 // ─── Responsive ───────────────────────────────────────────────────────────────
 @media (max-width: 600px) {
   .fire-strip { width: 50px; }
   .flame { font-size: 1.4rem !important; width: 24px; height: 24px; }
-
   .ma-content { padding: 1rem 0.75rem 3rem; gap: 1.5rem; }
-
-  .msg-card { padding: 1rem; }
-  .cta-btn  { padding: 0.85rem 1.75rem; }
-  .stats-row { gap: 1rem; }
-
-  .belt-segment { max-width: 60px; }
-
+  .msg-card   { padding: 1rem; }
+  .cta-btn    { padding: 0.85rem 1.4rem; font-size: 0.9rem; }
+  .stats-row  { gap: 1rem; }
+  .form-pill  { padding: 0.5rem 0.65rem; }
+  .haori-band { max-width: 70px; }
   .kiai-popup { font-size: clamp(2.5rem, 14vw, 5rem); }
 }
 
 @media (max-width: 380px) {
   .stats-row { flex-wrap: wrap; justify-content: center; }
   .stat.divider { display: none; }
+  .form-pills { gap: 0.4rem; }
 }

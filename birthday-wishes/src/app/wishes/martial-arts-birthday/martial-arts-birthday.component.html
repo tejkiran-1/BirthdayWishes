@@ -1,127 +1,211 @@
-<div class="ma-wrapper" [class.shake]="shakeActive" *ngIf="config">
+<div
+  #wrapper
+  [ngClass]="'ma-wrapper ' + activeForm.bgClass + (shakeActive ? ' shake' : '')"
+  [style.--form-color]="activeForm.color"
+  [style.--form-glow]="activeForm.glowColor"
+  *ngIf="config"
+>
 
-  <!-- ── Confetti overlay ───────────────────────────────────── -->
+  <!-- Confetti overlay -->
   <app-confetti-burst #confetti></app-confetti-burst>
 
-  <!-- ── Floating particles ────────────────────────────────── -->
-  <app-floating-particles [emojis]="particles" [count]="24"></app-floating-particles>
-
-  <!-- ── Background layers ─────────────────────────────────── -->
-  <div class="bg-layer bg-base"  aria-hidden="true"></div>
-  <div class="bg-layer bg-embers" aria-hidden="true"></div>
-  <div class="bg-layer bg-vignette" aria-hidden="true"></div>
-
-  <!-- ── Fire columns ──────────────────────────────────────── -->
-  <div class="fire-strip fire-left"  aria-hidden="true">
-    <span *ngFor="let f of [1,2,3,4,5,6]" class="flame"></span>
-  </div>
-  <div class="fire-strip fire-right" aria-hidden="true">
-    <span *ngFor="let f of [1,2,3,4,5,6]" class="flame"></span>
+  <!-- Kanji rain -->
+  <div class="kanji-rain" aria-hidden="true">
+    <span
+      *ngFor="let k of kanjiRain; trackBy: trackByKanji"
+      class="kanji-drop"
+      [style.left.%]="k.x"
+      [style.animation-delay.s]="k.delay"
+      [style.animation-duration.s]="k.dur"
+      [style.color]="activeForm.color"
+    >{{ k.char }}</span>
   </div>
 
-  <!-- ── Kiai popup ─────────────────────────────────────────── -->
-  <div class="kiai-popup" [class.visible]="showKiai" aria-live="polite">
+  <!-- Floating particles -->
+  <app-floating-particles [emojis]="activeForm.particles" [count]="20"></app-floating-particles>
+
+  <!-- Ambient glow per form -->
+  <div class="form-ambient" aria-hidden="true"
+    [style.background]="'radial-gradient(ellipse 70% 50% at 50% 0%, ' + activeForm.glowColor + ', transparent)'"
+  ></div>
+
+  <!-- Sword slash layer -->
+  <div class="slash-layer" aria-hidden="true">
+    <div
+      *ngFor="let slash of slashes; trackBy: trackBySlash"
+      class="sword-slash"
+      [style.left.px]="slash.x"
+      [style.top.px]="slash.y"
+      [style.width.px]="slash.length"
+      [style.transform]="'translate(-50%, -50%) rotate(' + slash.angle + 'deg)'"
+      [style.--slash-color]="slash.color"
+    ></div>
+  </div>
+
+  <!-- Total Concentration overlay -->
+  <div class="concentration-overlay" [class.active]="showConcentrationBurst" aria-live="assertive">
+    <div class="concentration-rays"></div>
+    <div class="concentration-kanji">全集中<br>常中</div>
+  </div>
+
+  <!-- Form announce popup -->
+  <div class="form-announce" [class.visible]="showFormAnnounce" role="status">
+    <span class="form-announce-icon">{{ activeForm.icon }}</span>
+    <span class="form-announce-text">{{ formAnnounceText }}</span>
+  </div>
+
+  <!-- Kiai popup -->
+  <div class="kiai-popup" [class.visible]="showKiai" [style.color]="activeForm.color" aria-live="polite">
     {{ kiaiWord }}
   </div>
 
-  <!-- ── Main content ───────────────────────────────────────── -->
+  <!-- Main content -->
   <main class="ma-content">
 
-    <!-- ── Top badge ─────────────────────────────────────────── -->
+    <!-- Top badge -->
     <div class="top-badge" [class.fade-in]="heroVisible">
-      <span class="badge-text">{{ config.theme.vibeLabel }}</span>
+      <span class="badge-text">{{ activeForm.nameEn }} · {{ activeForm.formLabel }}</span>
     </div>
 
-    <!-- ── Hero title ─────────────────────────────────────────── -->
+    <!-- Hero section -->
     <section class="hero-section" [class.slide-up]="heroVisible">
       <div class="hero-star-wrap">
-        <span class="hero-star spin-slow">⭐</span>
-        <span class="hero-star spin-fast small">🌟</span>
+        <span class="hero-star spin-slow">{{ activeForm.icon }}</span>
+        <span class="hero-star spin-fast small">✨</span>
       </div>
 
       <h1 class="hero-title">
         <span class="line-1">Happy</span>
-        <span class="line-2">Birthday</span>
-        <span class="flame-divider" aria-hidden="true">🔥━━━━━━🔥</span>
+        <span class="line-2" [style.color]="activeForm.color">Birthday</span>
+        <span class="flame-divider" aria-hidden="true">{{ activeForm.icon }}━━━━━{{ activeForm.icon }}</span>
       </h1>
 
       <div class="name-block">
         <span class="name-label">To The Warrior</span>
-        <h2 class="person-name">{{ config.personName }}</h2>
+        <h2 class="person-name"
+          [style.text-shadow]="'0 0 18px ' + activeForm.color + ', 0 0 40px ' + activeForm.color">
+          {{ config.personName }}
+        </h2>
         <p class="subtitle">{{ config.subtitle }}</p>
       </div>
 
-      <!-- Belt decoration -->
+      <!-- Haori belt per form -->
       <div class="belt-row" aria-hidden="true">
-        <div class="belt-segment black"></div>
-        <div class="belt-knot">🥋</div>
-        <div class="belt-segment black"></div>
+        <div class="belt-segment" [ngClass]="'haori-band haori-' + activeForm.id"></div>
+        <div class="belt-knot" [style.color]="activeForm.color">{{ activeForm.icon }}</div>
+        <div class="belt-segment" [ngClass]="'haori-band haori-' + activeForm.id"></div>
       </div>
     </section>
 
-    <!-- ── Interactive punch zone ─────────────────────────────── -->
+    <!-- Breathing Form Selector -->
+    <section class="form-selector" [class.fade-in]="heroVisible">
+      <p class="form-selector-label">⚔️ Choose Your Breathing Form</p>
+      <div class="form-pills">
+        <button
+          *ngFor="let form of breathingForms; let i = index"
+          class="form-pill"
+          [class.active]="i === activeFormIndex"
+          [style.--pill-color]="form.color"
+          (click)="switchForm(i); $event.stopPropagation()"
+          [attr.aria-label]="form.nameEn"
+          type="button"
+        >
+          <span class="pill-icon">{{ form.icon }}</span>
+          <span class="pill-text">{{ form.nameEn }}</span>
+        </button>
+      </div>
+      <p class="active-form-name" [style.color]="activeForm.color">
+        {{ activeForm.nameJp }} · {{ activeForm.formLabel }}
+      </p>
+    </section>
+
+    <!-- Total Concentration Charge Bar -->
+    <section class="charge-section" [class.fade-in]="cardVisible">
+      <div class="charge-label">
+        <span>全集中の呼吸</span>
+        <span class="charge-pct" [style.color]="activeForm.color">{{ chargeLevel }}%</span>
+      </div>
+      <div class="charge-bar" [class.charge-ready]="chargeLevel >= 100">
+        <div
+          class="charge-bar-fill"
+          [style.width.%]="chargeLevel"
+          [style.background]="activeForm.color"
+          [style.box-shadow]="'0 0 10px ' + activeForm.color + ', 0 0 24px ' + activeForm.glowColor"
+        ></div>
+      </div>
+      <p class="charge-hint" *ngIf="chargeLevel < 100">Tap to charge — reach 100% for Total Concentration!</p>
+      <p class="charge-hint charge-hint--ready" *ngIf="chargeLevel >= 100" [style.color]="activeForm.color">
+        ⚡ TOTAL CONCENTRATION READY! Tap anywhere!
+      </p>
+    </section>
+
+    <!-- Tap hint -->
     <div class="punch-zone-hint" [class.fade-in]="cardVisible">
       <span class="hint-icon">👆</span>
-      <p class="hint-text">Tap anywhere to celebrate!</p>
+      <p class="hint-text">Tap anywhere to slash &amp; charge!</p>
     </div>
 
-    <!-- ── Message cards ──────────────────────────────────────── -->
+    <!-- Message cards -->
     <section class="message-section" [class.slide-up]="cardVisible">
-
       <div class="msg-card"
            *ngFor="let msg of config.messages; let i = index"
            [class.delay-1]="i === 1"
            [class.delay-2]="i === 2"
-           [class.slide-up]="cardVisible">
-        <span class="msg-icon">{{ i === 0 ? '⚔️' : i === 1 ? '🏆' : '🔥' }}</span>
+           [class.slide-up]="cardVisible"
+           [style.border-color]="activeForm.color"
+           [style.box-shadow]="'0 0 12px ' + activeForm.glowColor">
+        <span class="msg-icon">{{ activeForm.icon }}</span>
         <p class="msg-text">{{ msg }}</p>
       </div>
     </section>
 
-    <!-- ── Highlights scroll ──────────────────────────────────── -->
+    <!-- Highlights scroll -->
     <section class="highlights-section" [class.fade-in]="cardVisible">
       <div class="highlight-track">
         <span class="highlight-item" *ngFor="let h of config.highlights">{{ h }}</span>
-        <!-- Duplicate for seamless loop -->
         <span class="highlight-item" *ngFor="let h of config.highlights">{{ h }}</span>
       </div>
     </section>
 
-    <!-- ── Big CTA button ─────────────────────────────────────── -->
+    <!-- CTA button -->
     <div class="cta-section" [class.slide-up]="cardVisible">
-      <button class="cta-btn" (click)="fireKick(); $event.stopPropagation()" type="button">
-        <span class="cta-icon">🥋</span>
+      <button
+        class="cta-btn"
+        [style.--form-color]="activeForm.color"
+        [style.--form-glow]="activeForm.glowColor"
+        (click)="fireKick(); $event.stopPropagation()"
+        type="button"
+      >
+        <span class="cta-icon">{{ activeForm.icon }}</span>
         FIRE THE CELEBRATION!
         <span class="cta-icon">💥</span>
       </button>
     </div>
 
-    <!-- ── Stats row ──────────────────────────────────────────── -->
+    <!-- Stats row -->
     <div class="stats-row" [class.fade-in]="cardVisible">
       <div class="stat">
-        <span class="stat-val">{{ hitCount }}</span>
-        <span class="stat-label">Taps</span>
+        <span class="stat-val" [style.color]="activeForm.color">{{ hitCount }}</span>
+        <span class="stat-label">Slashes</span>
+      </div>
+      <div class="stat divider">|</div>
+      <div class="stat">
+        <span class="stat-val" [style.color]="activeForm.color">{{ breathingForms.length }}</span>
+        <span class="stat-label">Forms</span>
       </div>
       <div class="stat divider">|</div>
       <div class="stat">
         <span class="stat-val">∞</span>
         <span class="stat-label">Good Wishes</span>
       </div>
-      <div class="stat divider">|</div>
-      <div class="stat">
-        <span class="stat-val">1</span>
-        <span class="stat-label">True Warrior</span>
-      </div>
     </div>
 
-    <!-- ── Footer ─────────────────────────────────────────────── -->
+    <!-- Footer -->
     <footer class="ma-footer">
-      <span class="footer-belt" aria-hidden="true">
-        ━━━━━━ 🥋 ━━━━━━
-      </span>
-      <p>Made with 🔥 & respect for the fighter in you</p>
+      <span class="footer-belt" aria-hidden="true">━━ {{ activeForm.icon }} ━━</span>
+      <p>Made with {{ activeForm.icon }} &amp; the spirit of {{ activeForm.nameEn }}</p>
     </footer>
 
-  </main><!-- /ma-content -->
+  </main>
 
-</div><!-- /ma-wrapper -->
+</div>
