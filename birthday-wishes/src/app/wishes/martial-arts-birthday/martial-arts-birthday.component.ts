@@ -68,6 +68,13 @@ export class MartialArtsBirthdayComponent implements OnInit, OnDestroy {
   // ── Sword slashes ─────────────────────────────────────────────
   slashes: SwordSlash[] = [];
 
+  // ── Zenitsu loader ─────────────────────────────────────────────
+  showLoader = true;
+  loaderExiting = false;
+  loaderProgress = 0;
+  thunderReveal = false;
+  private loaderProgressInterval: ReturnType<typeof setInterval> | null = null;
+
   // ── Mobile enhancements ───────────────────────────────────────
   isFullscreen = false;
   megaSlashActive = false;
@@ -190,6 +197,33 @@ export class MartialArtsBirthdayComponent implements OnInit, OnDestroy {
       this.ngZone.run(() => { this.isFullscreen = !!document.fullscreenElement; this.cdr.markForCheck(); });
     });
 
+    // ── Zenitsu loader: fill progress bar over 3s then thunder-exit ──
+    this.loaderProgress = 0;
+    this.loaderProgressInterval = setInterval(() => {
+      this.loaderProgress = Math.min(100, this.loaderProgress + 2);
+      this.cdr.markForCheck();
+    }, 60); // 50 steps × 60ms ≈ 3 000ms
+
+    const loaderExit = setTimeout(() => {
+      if (this.loaderProgressInterval) { clearInterval(this.loaderProgressInterval); this.loaderProgressInterval = null; }
+      this.loaderProgress = 100;
+      this.loaderExiting = true;
+      this.vibrate([50, 30, 50, 30, 300]);
+      this.cdr.markForCheck();
+      const hideTimer = setTimeout(() => {
+        this.showLoader = false;
+        this.thunderReveal = true;
+        this.cdr.markForCheck();
+        const clearReveal = setTimeout(() => { this.thunderReveal = false; this.cdr.markForCheck(); }, 600);
+        this.timers.push(clearReveal);
+        this.startIntro();
+      }, 700);
+      this.timers.push(hideTimer);
+    }, 3000);
+    this.timers.push(loaderExit);
+  }
+
+  private startIntro(): void {
     this.introTimer = setTimeout(() => {
       this.heroVisible = true;
       this.cdr.markForCheck();
@@ -531,6 +565,7 @@ export class MartialArtsBirthdayComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.introTimer) clearTimeout(this.introTimer);
     if (this.longPressTimer) clearTimeout(this.longPressTimer);
+    if (this.loaderProgressInterval) clearInterval(this.loaderProgressInterval);
     this.timers.forEach(clearTimeout);
     this.wakeLock?.release?.().catch(() => {});
     this.motionDetectorUnlisten?.();

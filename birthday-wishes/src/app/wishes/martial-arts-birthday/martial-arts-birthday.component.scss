@@ -993,3 +993,332 @@ $font-body:    'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   strong { color: var(--form-color); font-weight: 700; }
 }
 
+// ══════════════════════════════════════════════════════════════════════════════
+// ZENITSU LOADER
+// ══════════════════════════════════════════════════════════════════════════════
+$zl-gold:       #ffd700;
+$zl-gold-lt:    #fffacd;
+$zl-dark:       #03050e;
+
+.zenitsu-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: radial-gradient(ellipse 80% 70% at 50% 60%, #0d0d2e 0%, $zl-dark 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  &.exiting {
+    animation: zl-thunder-exit 0.7s cubic-bezier(0.4, 0, 1, 1) forwards;
+    pointer-events: none;
+
+    .zl-flash-overlay { animation: zl-flash 0.7s forwards; }
+  }
+}
+
+@keyframes zl-thunder-exit {
+  0%   { opacity: 1; filter: brightness(1); }
+  18%  { opacity: 1; filter: brightness(12) saturate(0.3) contrast(1.5); }
+  35%  { opacity: 0.9; filter: brightness(6) saturate(0); }
+  70%  { opacity: 0.4; filter: brightness(3); }
+  100% { opacity: 0; filter: brightness(1); }
+}
+
+// ── Background bolts ─────────────────────────────────────────────────────────
+.zl-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+
+.zl-bolt {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    rgba(255,215,0,0.8) 20%,
+    $zl-gold 50%,
+    $zl-gold-lt 55%,
+    rgba(255,215,0,0.4) 80%,
+    transparent 100%
+  );
+  transform-origin: top center;
+  opacity: 0;
+  filter: blur(0.5px) drop-shadow(0 0 6px $zl-gold);
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 1px;
+    background: linear-gradient(to right, $zl-gold, transparent);
+    top: 45%;
+    left: 0;
+    transform: rotate(50deg);
+  }
+
+  &--1 { left: 8%;  height: 38vh; animation: zl-bolt-flash 2.0s 0.1s  infinite; }
+  &--2 { left: 22%; height: 60vh; width: 3px; animation: zl-bolt-flash 1.7s 0.6s  infinite; }
+  &--3 { left: 38%; height: 45vh; animation: zl-bolt-flash 1.4s 0.0s  infinite; }
+  &--4 { left: 55%; height: 75vh; width: 3px; animation: zl-bolt-flash 2.2s 1.0s  infinite; }
+  &--5 { left: 72%; height: 42vh; animation: zl-bolt-flash 1.8s 0.4s  infinite; }
+  &--6 { left: 88%; height: 55vh; animation: zl-bolt-flash 2.4s 0.8s  infinite; }
+}
+
+@keyframes zl-bolt-flash {
+  0%, 100%       { opacity: 0; transform: scaleX(1); }
+  8%             { opacity: 0; }
+  10%            { opacity: 1; }
+  12%            { opacity: 0.3; }
+  14%            { opacity: 0.9; }
+  18%            { opacity: 0; }
+}
+
+// ── Floating sparks ──────────────────────────────────────────────────────────
+.zl-sparks { position: absolute; inset: 0; pointer-events: none; }
+
+.zl-spark {
+  position: absolute;
+  filter: drop-shadow(0 0 5px $zl-gold);
+  color: $zl-gold;
+  animation: zl-spark-drift linear infinite;
+  will-change: transform, opacity;
+}
+
+// 12 sparks — hardcoded positions & timing for reliability
+.zl-spark--1  { left:  6%; top: 15%; font-size: 1.1rem; animation-duration: 3.2s; animation-delay: -0.3s; }
+.zl-spark--2  { left: 18%; top: 70%; font-size: 0.9rem; animation-duration: 2.8s; animation-delay: -1.1s; }
+.zl-spark--3  { left: 30%; top: 35%; font-size: 0.7rem; animation-duration: 3.6s; animation-delay: -0.7s; }
+.zl-spark--4  { left: 45%; top: 85%; font-size: 1.3rem; animation-duration: 2.5s; animation-delay: -2.0s; }
+.zl-spark--5  { left: 58%; top: 10%; font-size: 0.8rem; animation-duration: 4.0s; animation-delay: -0.5s; }
+.zl-spark--6  { left: 70%; top: 55%; font-size: 1.2rem; animation-duration: 3.0s; animation-delay: -1.5s; }
+.zl-spark--7  { left: 82%; top: 25%; font-size: 0.7rem; animation-duration: 2.7s; animation-delay: -0.9s; }
+.zl-spark--8  { left: 92%; top: 78%; font-size: 1.0rem; animation-duration: 3.4s; animation-delay: -1.8s; }
+.zl-spark--9  { left: 12%; top: 50%; font-size: 0.6rem; animation-duration: 2.9s; animation-delay: -2.3s; }
+.zl-spark--10 { left: 50%; top: 60%; font-size: 1.4rem; animation-duration: 3.8s; animation-delay: -0.4s; }
+.zl-spark--11 { left: 75%; top: 90%; font-size: 0.75rem; animation-duration: 3.1s; animation-delay: -1.3s; }
+.zl-spark--12 { left: 38%; top: 20%; font-size: 0.85rem; animation-duration: 2.6s; animation-delay: -2.6s; }
+
+@keyframes zl-spark-drift {
+  0%   { transform: translateY(0) scale(1) rotate(0deg);   opacity: 0;   }
+  15%  { opacity: 0.9; }
+  50%  { transform: translateY(-28px) scale(1.4) rotate(-25deg); opacity: 1;   }
+  85%  { opacity: 0.5; }
+  100% { transform: translateY(14px) scale(0.7) rotate(20deg);  opacity: 0;   }
+}
+
+// ── Center content ────────────────────────────────────────────────────────────
+.zl-center {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+  padding: 0 1.5rem;
+  animation: zl-center-in 0.6s ease both;
+}
+
+@keyframes zl-center-in {
+  from { opacity: 0; transform: translateY(24px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+// Top badge
+.zl-form-badge {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(0.85rem, 3.5vw, 1.1rem);
+  letter-spacing: 0.3em;
+  color: $zl-gold;
+  text-shadow: 0 0 14px $zl-gold;
+  text-transform: uppercase;
+  animation: zl-badge-pulse 1.4s ease-in-out infinite alternate;
+  border: 1px solid rgba(255,215,0,0.25);
+  padding: 0.2rem 1rem;
+  border-radius: 99px;
+  background: rgba(255,215,0,0.06);
+}
+
+@keyframes zl-badge-pulse {
+  from { text-shadow: 0 0 8px $zl-gold;  box-shadow: 0 0 0px transparent; }
+  to   { text-shadow: 0 0 22px $zl-gold, 0 0 40px rgba(255,215,0,0.5);
+         box-shadow: 0 0 18px rgba(255,215,0,0.2); }
+}
+
+// Icon ring + bolt
+.zl-icon-wrap {
+  position: relative;
+  width:  clamp(100px, 24vw, 140px);
+  height: clamp(100px, 24vw, 140px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.2rem 0;
+}
+
+.zl-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid $zl-gold;
+
+  &--outer {
+    animation: zl-spin 4s linear infinite;
+    border-style: dashed;
+    opacity: 0.55;
+    filter: drop-shadow(0 0 8px $zl-gold);
+  }
+  &--mid {
+    inset: 10px;
+    animation: zl-spin 2.5s linear infinite reverse;
+    border-color: $zl-gold-lt;
+    opacity: 0.3;
+  }
+  &--inner {
+    inset: 22px;
+    animation: zl-spin 1.5s linear infinite;
+    border-color: $zl-gold;
+    opacity: 0.45;
+    border-width: 2px;
+  }
+}
+
+@keyframes zl-spin { to { transform: rotate(360deg); } }
+
+.zl-main-bolt {
+  font-size: clamp(3rem, 11vw, 5.5rem);
+  line-height: 1;
+  z-index: 1;
+  animation: zl-bolt-throb 0.9s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 18px $zl-gold) drop-shadow(0 0 50px rgba(255,215,0,0.5));
+}
+
+@keyframes zl-bolt-throb {
+  from { transform: scale(1)    rotate(-6deg); filter: drop-shadow(0 0 14px $zl-gold); }
+  to   { transform: scale(1.18) rotate( 6deg); filter: drop-shadow(0 0 36px $zl-gold) drop-shadow(0 0 80px rgba(255,215,0,0.7)); }
+}
+
+// Name block
+.zl-name-jp {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.2rem, 10vw, 4rem);
+  letter-spacing: 0.2em;
+  color: #fff;
+  text-shadow: 0 0 18px $zl-gold, 0 0 50px rgba(255,215,0,0.35);
+  line-height: 1;
+  animation: zl-name-flicker 4s 1s infinite;
+}
+
+.zl-name-en {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(1rem, 5vw, 1.7rem);
+  letter-spacing: 0.35em;
+  color: $zl-gold;
+  text-shadow: 0 0 10px $zl-gold;
+}
+
+.zl-form-label {
+  font-size: clamp(0.6rem, 2.5vw, 0.8rem);
+  letter-spacing: 0.15em;
+  color: rgba(255,215,0,0.55);
+  font-family: 'Inter', sans-serif;
+  text-transform: uppercase;
+}
+
+@keyframes zl-name-flicker {
+  0%,90%,100% { opacity: 1; }
+  91%          { opacity: 0.35; }
+  93%          { opacity: 1; }
+  95%          { opacity: 0.55; }
+}
+
+// Dedication line
+.zl-dedication {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(0.75rem, 3.5vw, 1rem);
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 0 10px $zl-gold;
+  letter-spacing: 0.04em;
+  margin-top: 0.3rem;
+  animation: zl-badge-pulse 1.8s ease-in-out infinite alternate;
+}
+
+// Progress bar
+.zl-bar-wrap {
+  width: clamp(220px, 68vw, 360px);
+  margin-top: 0.6rem;
+}
+
+.zl-bar-track {
+  height: 7px;
+  background: rgba(255,215,0,0.1);
+  border-radius: 99px;
+  border: 1px solid rgba(255,215,0,0.2);
+  position: relative;
+  overflow: visible;
+}
+
+.zl-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #ff8c00, $zl-gold, $zl-gold-lt);
+  box-shadow: 0 0 10px $zl-gold, 0 0 28px rgba(255,215,0,0.45);
+  transition: width 0.06s linear;
+  position: relative;
+}
+
+.zl-bar-dot {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: $zl-gold-lt;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px $zl-gold, 0 0 24px $zl-gold;
+  transition: left 0.06s linear;
+}
+
+.zl-bar-label {
+  font-size: 0.62rem;
+  color: rgba(255,215,0,0.5);
+  letter-spacing: 0.12em;
+  font-family: 'Inter', sans-serif;
+  text-align: right;
+  margin-top: 0.35rem;
+}
+
+// Exit flash
+.zl-flash-overlay {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+@keyframes zl-flash {
+  0%   { opacity: 0; }
+  12%  { opacity: 1; }
+  35%  { opacity: 0.95; }
+  100% { opacity: 0; }
+}
+
+// ── Thunder reveal: page slides in after loader exits with yellow flash ───────
+.ma-wrapper {
+  animation: none; // default
+
+  &.thunder-reveal {
+    animation: zl-page-reveal 0.5s ease both;
+  }
+}
+
+@keyframes zl-page-reveal {
+  0%   { opacity: 0; filter: brightness(4) saturate(0); transform: scale(1.04); }
+  40%  { opacity: 0.7; filter: brightness(2); }
+  100% { opacity: 1;   filter: brightness(1); transform: scale(1); }
+}
+
+

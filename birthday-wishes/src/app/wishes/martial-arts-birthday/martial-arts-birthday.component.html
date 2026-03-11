@@ -1,6 +1,73 @@
+<!-- ═════════════════════ ZENITSU LOADER ═════════════════════ -->
+<div class="zenitsu-loader" *ngIf="showLoader" [class.exiting]="loaderExiting">
+
+  <!-- Animated background lightning bolts -->
+  <div class="zl-bg" aria-hidden="true">
+    <div class="zl-bolt zl-bolt--1"></div>
+    <div class="zl-bolt zl-bolt--2"></div>
+    <div class="zl-bolt zl-bolt--3"></div>
+    <div class="zl-bolt zl-bolt--4"></div>
+    <div class="zl-bolt zl-bolt--5"></div>
+    <div class="zl-bolt zl-bolt--6"></div>
+  </div>
+
+  <!-- Floating ⚡ sparks -->
+  <div class="zl-sparks" aria-hidden="true">
+    <span class="zl-spark zl-spark--1">⚡</span>
+    <span class="zl-spark zl-spark--2">⚡</span>
+    <span class="zl-spark zl-spark--3">✨</span>
+    <span class="zl-spark zl-spark--4">⚡</span>
+    <span class="zl-spark zl-spark--5">⭐</span>
+    <span class="zl-spark zl-spark--6">⚡</span>
+    <span class="zl-spark zl-spark--7">✨</span>
+    <span class="zl-spark zl-spark--8">⚡</span>
+    <span class="zl-spark zl-spark--9">⭐</span>
+    <span class="zl-spark zl-spark--10">⚡</span>
+    <span class="zl-spark zl-spark--11">✨</span>
+    <span class="zl-spark zl-spark--12">⚡</span>
+  </div>
+
+  <!-- Center content -->
+  <div class="zl-center">
+
+    <!-- Top form kanji badge -->
+    <div class="zl-form-badge">雷の呼吸 · Thunder Breathing</div>
+
+    <!-- Main icon ring -->
+    <div class="zl-icon-wrap" aria-hidden="true">
+      <div class="zl-ring zl-ring--outer"></div>
+      <div class="zl-ring zl-ring--mid"></div>
+      <div class="zl-ring zl-ring--inner"></div>
+      <span class="zl-main-bolt">⚡</span>
+    </div>
+
+    <!-- Character name -->
+    <div class="zl-name-jp">我妻善逸</div>
+    <div class="zl-name-en">AGATSUMA ZENITSU</div>
+    <div class="zl-form-label">First Form &middot; Thunderclap &amp; Flash</div>
+
+    <!-- Birthday dedication -->
+    <div class="zl-dedication">⚡ Charging Thunder for Satyam’s Birthday ⚡</div>
+
+    <!-- Progress bar -->
+    <div class="zl-bar-wrap">
+      <div class="zl-bar-track">
+        <div class="zl-bar-fill" [style.width.%]="loaderProgress"></div>
+        <div class="zl-bar-dot" [style.left.%]="loaderProgress"></div>
+      </div>
+      <div class="zl-bar-label">{{ loaderProgress }}% charged</div>
+    </div>
+
+  </div>
+
+  <!-- White flash overlay (triggered on exit) -->
+  <div class="zl-flash-overlay" aria-hidden="true"></div>
+
+</div>
+
 <div
   #wrapper
-  [ngClass]="'ma-wrapper ' + activeForm.bgClass + (shakeActive ? ' shake' : '') + (megaSlashActive ? ' mega-active' : '') + (doubleTapFinisherActive ? ' finisher-active' : '')"
+  [ngClass]="'ma-wrapper ' + activeForm.bgClass + (shakeActive ? ' shake' : '') + (megaSlashActive ? ' mega-active' : '') + (doubleTapFinisherActive ? ' finisher-active' : '') + (thunderReveal ? ' thunder-reveal' : '')"
   [style.--form-color]="activeForm.color"
   [style.--form-glow]="activeForm.glowColor"
   *ngIf="config"
