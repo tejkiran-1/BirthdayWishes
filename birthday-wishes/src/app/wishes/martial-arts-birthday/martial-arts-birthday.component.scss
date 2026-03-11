@@ -441,6 +441,7 @@ $font-body:    'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   background: rgba(255,255,255,0.05);
   border: 1.5px solid rgba(255,255,255,0.1);
   border-radius: 14px; cursor: pointer;
+  color: $white;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   position: relative; overflow: hidden;
 
@@ -468,6 +469,12 @@ $font-body:    'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
 }
 
 .pill-icon  { font-size: 1.5rem; display: block; }
+.pill-text  {
+  font-size: 0.65rem; font-weight: 600; color: $white;
+  letter-spacing: 0.07em; text-transform: uppercase; white-space: nowrap;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
+.form-pill.active .pill-text { color: var(--pill-color, $white); }
 .pill-kanji {
   font-family: $font-display; font-size: 0.85rem;
   color: var(--pill-color, $white); letter-spacing: 0.06em;
