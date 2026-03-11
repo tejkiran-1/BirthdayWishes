@@ -1,0 +1,127 @@
+<div class="ma-wrapper" [class.shake]="shakeActive" *ngIf="config">
+
+  <!-- ── Confetti overlay ───────────────────────────────────── -->
+  <app-confetti-burst #confetti></app-confetti-burst>
+
+  <!-- ── Floating particles ────────────────────────────────── -->
+  <app-floating-particles [emojis]="particles" [count]="24"></app-floating-particles>
+
+  <!-- ── Background layers ─────────────────────────────────── -->
+  <div class="bg-layer bg-base"  aria-hidden="true"></div>
+  <div class="bg-layer bg-embers" aria-hidden="true"></div>
+  <div class="bg-layer bg-vignette" aria-hidden="true"></div>
+
+  <!-- ── Fire columns ──────────────────────────────────────── -->
+  <div class="fire-strip fire-left"  aria-hidden="true">
+    <span *ngFor="let f of [1,2,3,4,5,6]" class="flame"></span>
+  </div>
+  <div class="fire-strip fire-right" aria-hidden="true">
+    <span *ngFor="let f of [1,2,3,4,5,6]" class="flame"></span>
+  </div>
+
+  <!-- ── Kiai popup ─────────────────────────────────────────── -->
+  <div class="kiai-popup" [class.visible]="showKiai" aria-live="polite">
+    {{ kiaiWord }}
+  </div>
+
+  <!-- ── Main content ───────────────────────────────────────── -->
+  <main class="ma-content">
+
+    <!-- ── Top badge ─────────────────────────────────────────── -->
+    <div class="top-badge" [class.fade-in]="heroVisible">
+      <span class="badge-text">{{ config.theme.vibeLabel }}</span>
+    </div>
+
+    <!-- ── Hero title ─────────────────────────────────────────── -->
+    <section class="hero-section" [class.slide-up]="heroVisible">
+      <div class="hero-star-wrap">
+        <span class="hero-star spin-slow">⭐</span>
+        <span class="hero-star spin-fast small">🌟</span>
+      </div>
+
+      <h1 class="hero-title">
+        <span class="line-1">Happy</span>
+        <span class="line-2">Birthday</span>
+        <span class="flame-divider" aria-hidden="true">🔥━━━━━━🔥</span>
+      </h1>
+
+      <div class="name-block">
+        <span class="name-label">To The Warrior</span>
+        <h2 class="person-name">{{ config.personName }}</h2>
+        <p class="subtitle">{{ config.subtitle }}</p>
+      </div>
+
+      <!-- Belt decoration -->
+      <div class="belt-row" aria-hidden="true">
+        <div class="belt-segment black"></div>
+        <div class="belt-knot">🥋</div>
+        <div class="belt-segment black"></div>
+      </div>
+    </section>
+
+    <!-- ── Interactive punch zone ─────────────────────────────── -->
+    <div class="punch-zone-hint" [class.fade-in]="cardVisible">
+      <span class="hint-icon">👆</span>
+      <p class="hint-text">Tap anywhere to celebrate!</p>
+    </div>
+
+    <!-- ── Message cards ──────────────────────────────────────── -->
+    <section class="message-section" [class.slide-up]="cardVisible">
+
+      <div class="msg-card"
+           *ngFor="let msg of config.messages; let i = index"
+           [class.delay-1]="i === 1"
+           [class.delay-2]="i === 2"
+           [class.slide-up]="cardVisible">
+        <span class="msg-icon">{{ i === 0 ? '⚔️' : i === 1 ? '🏆' : '🔥' }}</span>
+        <p class="msg-text">{{ msg }}</p>
+      </div>
+    </section>
+
+    <!-- ── Highlights scroll ──────────────────────────────────── -->
+    <section class="highlights-section" [class.fade-in]="cardVisible">
+      <div class="highlight-track">
+        <span class="highlight-item" *ngFor="let h of config.highlights">{{ h }}</span>
+        <!-- Duplicate for seamless loop -->
+        <span class="highlight-item" *ngFor="let h of config.highlights">{{ h }}</span>
+      </div>
+    </section>
+
+    <!-- ── Big CTA button ─────────────────────────────────────── -->
+    <div class="cta-section" [class.slide-up]="cardVisible">
+      <button class="cta-btn" (click)="fireKick(); $event.stopPropagation()" type="button">
+        <span class="cta-icon">🥋</span>
+        FIRE THE CELEBRATION!
+        <span class="cta-icon">💥</span>
+      </button>
+    </div>
+
+    <!-- ── Stats row ──────────────────────────────────────────── -->
+    <div class="stats-row" [class.fade-in]="cardVisible">
+      <div class="stat">
+        <span class="stat-val">{{ hitCount }}</span>
+        <span class="stat-label">Taps</span>
+      </div>
+      <div class="stat divider">|</div>
+      <div class="stat">
+        <span class="stat-val">∞</span>
+        <span class="stat-label">Good Wishes</span>
+      </div>
+      <div class="stat divider">|</div>
+      <div class="stat">
+        <span class="stat-val">1</span>
+        <span class="stat-label">True Warrior</span>
+      </div>
+    </div>
+
+    <!-- ── Footer ─────────────────────────────────────────────── -->
+    <footer class="ma-footer">
+      <span class="footer-belt" aria-hidden="true">
+        ━━━━━━ 🥋 ━━━━━━
+      </span>
+      <p>Made with 🔥 & respect for the fighter in you</p>
+    </footer>
+
+  </main><!-- /ma-content -->
+
+</div><!-- /ma-wrapper -->

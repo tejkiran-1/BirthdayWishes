@@ -1,0 +1,54 @@
+<div class="home-wrapper">
+  <!-- Background decorations -->
+  <div class="bg-circles" aria-hidden="true">
+    <span class="circle c1"></span>
+    <span class="circle c2"></span>
+    <span class="circle c3"></span>
+  </div>
+
+  <header class="home-header">
+    <div class="logo-wrap">
+      <span class="logo-icon">🎉</span>
+      <h1 class="logo-title">WishCraft</h1>
+    </div>
+    <p class="logo-tagline">Personalised wishes for every special moment</p>
+  </header>
+
+  <main class="cards-section">
+    <h2 class="section-label">Select a Wish</h2>
+
+    <div class="cards-grid">
+      <article
+        *ngFor="let wish of wishes"
+        class="wish-card"
+        [ngClass]="wish.theme.themeClass"
+        (click)="openWish(wish.id)"
+        tabindex="0"
+        (keyup.enter)="openWish(wish.id)"
+        role="button"
+        [attr.aria-label]="'Open wish for ' + wish.personName"
+      >
+        <div class="card-glow"></div>
+        <div class="card-icon">
+          {{ getOccasionIcon(wish.occasionType) }}
+        </div>
+        <div class="card-body">
+          <span class="card-occasion">{{ wish.theme.vibeLabel }}</span>
+          <h3 class="card-name">{{ wish.personName }}</h3>
+          <p class="card-title">{{ wish.title }}</p>
+        </div>
+        <div class="card-arrow">→</div>
+      </article>
+
+      <!-- Placeholder empty card prompting to add more -->
+      <div class="wish-card wish-card--add" tabindex="0" aria-label="Add new wish">
+        <span class="add-icon">＋</span>
+        <p class="add-label">Add new wish</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="home-footer">
+    Made with ❤️ &amp; a little magic
+  </footer>
+</div>

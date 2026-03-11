@@ -1,0 +1,225 @@
+@use 'sass:math';
+
+// ─── Variables ────────────────────────────────────────────────────
+$bg: #0d0d16;
+$surface: #16161f;
+$border: rgba(255,255,255,0.08);
+$text-primary: #f0f0f5;
+$text-muted: rgba(240,240,245,0.55);
+$accent: #7c6ff7;
+$radius: 20px;
+
+// ─── Wrapper ──────────────────────────────────────────────────────
+.home-wrapper {
+  min-height: 100vh;
+  background: $bg;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1.25rem 3rem;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+// ─── Background circles ───────────────────────────────────────────
+.bg-circles {
+  position: absolute; inset: 0; pointer-events: none;
+}
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.18;
+}
+.c1 { width: 500px; height: 500px; background: #7c6ff7; top: -150px; left: -150px; }
+.c2 { width: 400px; height: 400px; background: #c9a227; bottom: -120px; right: -100px; }
+.c3 { width: 300px; height: 300px; background: #8b0000; top: 40%; left: 40%; }
+
+// ─── Header ───────────────────────────────────────────────────────
+.home-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  z-index: 1;
+}
+
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.logo-icon {
+  font-size: 2.5rem;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+.logo-title {
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  font-weight: 800;
+  color: $text-primary;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #fff 0%, #c9a227 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+.logo-tagline {
+  color: $text-muted;
+  font-size: 0.95rem;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+// ─── Section label ────────────────────────────────────────────────
+.section-label {
+  color: $text-muted;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+  text-align: center;
+  z-index: 1;
+}
+
+// ─── Cards grid ───────────────────────────────────────────────────
+.cards-section {
+  width: 100%;
+  max-width: 1000px;
+  z-index: 1;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+// ─── Individual card ──────────────────────────────────────────────
+.wish-card {
+  position: relative;
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius;
+  padding: 1.75rem 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+
+  &:hover, &:focus {
+    outline: none;
+    transform: translateY(-4px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+    border-color: rgba(255,255,255,0.2);
+
+    .card-glow { opacity: 1; }
+    .card-arrow { transform: translateX(4px); }
+  }
+}
+
+.card-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: $radius;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  background: radial-gradient(circle at 30% 50%, rgba(201,162,39,0.12), transparent 70%);
+}
+
+// Theme tints on card hover
+.wish-card.theme-martial-arts .card-glow {
+  background: radial-gradient(circle at 30% 50%, rgba(201,162,39,0.2), transparent 70%);
+}
+
+.card-icon {
+  font-size: 2.2rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-occasion {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #c9a227;
+  margin-bottom: 0.2rem;
+}
+
+.card-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: $text-primary;
+  margin: 0 0 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-title {
+  font-size: 0.82rem;
+  color: $text-muted;
+  margin: 0;
+}
+
+.card-arrow {
+  font-size: 1.1rem;
+  color: $text-muted;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+// ─── Add card ─────────────────────────────────────────────────────
+.wish-card--add {
+  flex-direction: column;
+  justify-content: center;
+  border-style: dashed;
+  opacity: 0.45;
+  pointer-events: none;
+  gap: 0.4rem;
+
+  .add-icon { font-size: 1.8rem; color: $text-muted; }
+  .add-label { font-size: 0.85rem; color: $text-muted; margin: 0; }
+}
+
+// ─── Footer ───────────────────────────────────────────────────────
+.home-footer {
+  margin-top: 3rem;
+  color: $text-muted;
+  font-size: 0.8rem;
+  z-index: 1;
+}
+
+// ─── Animations ───────────────────────────────────────────────────
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.08); }
+}
+
+// ─── Responsive ───────────────────────────────────────────────────
+@media (max-width: 480px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
