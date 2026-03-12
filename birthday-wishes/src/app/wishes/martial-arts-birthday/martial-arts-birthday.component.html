@@ -65,6 +65,58 @@
 
 </div>
 
+<!-- ═════════════════════ VIDEO OVERLAY ═════════════════════ -->
+<div class="video-overlay" [class.show]="showVideoOverlay" (click)="onVideoOverlayClick()">
+
+  <button
+    *ngIf="showIntroSoundPrompt"
+    type="button"
+    class="intro-sound-prompt"
+    (click)="onIntroSoundPromptClick($event)"
+    aria-label="Enable intro sound"
+  >
+    <span class="intro-sound-prompt__icon">🔊</span>
+    <span class="intro-sound-prompt__label">Enable Sound</span>
+  </button>
+
+  <!-- Thunder effects background -->
+  <div class="thunder-bg" aria-hidden="true">
+    <div class="thunder-bolt thunder-bolt--1"></div>
+    <div class="thunder-bolt thunder-bolt--2"></div>
+    <div class="thunder-bolt thunder-bolt--3"></div>
+  </div>
+
+  <!-- Circular video container -->
+  <div class="video-container">
+    <div class="video-circle">
+      <video
+        #videoElement
+        autoplay
+        muted
+        playsinline
+        preload="auto"
+        (ended)="onVideoEnded()"
+        class="video-element"
+      >
+        <source src="/video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    <!-- Video glow ring -->
+    <div class="video-glow-ring"></div>
+  </div>
+
+  <!-- Thunder sparks -->
+  <div class="thunder-sparks" aria-hidden="true">
+    <span class="spark spark--1">⚡</span>
+    <span class="spark spark--2">⚡</span>
+    <span class="spark spark--3">✨</span>
+    <span class="spark spark--4">⚡</span>
+    <span class="spark spark--5">⭐</span>
+  </div>
+
+</div>
+
 <div
   #wrapper
   [ngClass]="'ma-wrapper ' + activeForm.bgClass + (shakeActive ? ' shake' : '') + (megaSlashActive ? ' mega-active' : '') + (doubleTapFinisherActive ? ' finisher-active' : '') + (thunderReveal ? ' thunder-reveal' : '')"

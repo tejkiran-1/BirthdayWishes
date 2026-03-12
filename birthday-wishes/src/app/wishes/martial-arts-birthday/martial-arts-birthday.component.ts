@@ -9,7 +9,7 @@ import {
   HostListener,
   NgZone,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { WishConfigService } from '../../core/services/wish-config.service';
 import { WishConfig } from '../../core/models/wish-config.model';
 import { ConfettiBurstComponent } from '../../shared/components/confetti-burst/confetti-burst.component';
@@ -52,6 +52,7 @@ let slashId = 0;
 export class MartialArtsBirthdayComponent implements OnInit, OnDestroy {
   @ViewChild('confetti') confetti!: ConfettiBurstComponent;
   @ViewChild('wrapper') wrapperRef!: ElementRef<HTMLElement>;
+  @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
 
   config!: WishConfig;
 
@@ -73,6 +74,9 @@ export class MartialArtsBirthdayComponent implements OnInit, OnDestroy {
   loaderExiting = false;
   loaderProgress = 0;
   thunderReveal = false;
+  showVideoOverlay = false;
+  videoPlaying = false;
+  showIntroSoundPrompt = false;
   private loaderProgressInterval: ReturnType<typeof setInterval> | null = null;
 
   // ── Mobile enhancements ───────────────────────────────────────
@@ -85,6 +89,13 @@ export class MartialArtsBirthdayComponent implements OnInit, OnDestroy {
   private longPressTouchY = 0;
   private lastTapTime = 0;
   private longPressTimer: ReturnType<typeof setTimeout> | null = null;
+  private introVideoPlayer: HTMLVideoElement | null = null;
+  private introAudioBlocked = false;
+  private introAudioUnlockHandler: EventListener | null = null;
+  private arrivedFromWishCard = false;
+  private introVideoFinished = false;
+  private loaderFinished = false;
+  private introSequenceStarted = false;
   private wakeLock: any = null;
   private motionDetectorUnlisten: (() => void) | null = null;
 
@@ -182,14 +193,20 @@ export class MartialArtsBirthdayComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private wishConfigService: WishConfigService,
     private cdr: ChangeDetectorRef,
     private ngZone: NgZone,
-  ) {}
+  ) {
+    this.arrivedFromWishCard = this.router.getCurrentNavigation()?.extras.state?.['fromWishCard'] === true;
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id') ?? 'satyam-birthday';
     this.config = this.wishConfigService.getWishById(id)!;
+
+    this.initializeIntroVideo();
+    this.installIntroAudioUnlock();
     this.generateKanjiRain();
     this.requestWakeLock();
     this.initShakeDetector();
@@ -213,14 +230,105 @@ export class MartialArtsBirthdayComponent implements OnInit, OnDestroy {
       const hideTimer = setTimeout(() => {
         this.showLoader = false;
         this.thunderReveal = true;
+        this.showVideoOverlay = true;
+        this.videoPlaying = true;
+        this.loaderFinished = true;
+        this.showIntroSoundPrompt = !this.arrivedFromWishCard
+          && (this.introAudioBlocked || this.introVideoPlayer?.muted !== false);
         this.cdr.markForCheck();
-        const clearReveal = setTimeout(() => { this.thunderReveal = false; this.cdr.markForCheck(); }, 600);
-        this.timers.push(clearReveal);
-        this.startIntro();
+
+        const syncTimer = setTimeout(() => {
+          this.tryEnableIntroAudio();
+          this.syncVisibleVideo();
+          this.maybeCompleteIntroSequence();
+        }, 50);
+        this.timers.push(syncTimer);
       }, 700);
       this.timers.push(hideTimer);
     }, 3000);
     this.timers.push(loaderExit);
+  }
+
+  private initializeIntroVideo(): void {
+    const video = document.createElement('video');
+    video.src = '/video.mp4';
+    video.defaultMuted = false;
+    video.muted = false;
+    video.volume = 1;
+    video.preload = 'auto';
+    video.playsInline = true;
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', 'true');
+    video.addEventListener('ended', () => {
+      this.ngZone.run(() => {
+        this.introVideoFinished = true;
+        this.maybeCompleteIntroSequence();
+      });
+    });
+    video.load();
+    this.introVideoPlayer = video;
+    this.playElement(video, true);
+  }
+
+  private syncVisibleVideo(): void {
+    const visibleVideo = this.videoElement?.nativeElement;
+    if (!visibleVideo) return;
+
+    visibleVideo.defaultMuted = true;
+    visibleVideo.muted = true;
+    visibleVideo.currentTime = this.introVideoPlayer?.currentTime ?? 0;
+    if (!this.introVideoFinished) {
+      this.playElement(visibleVideo);
+    }
+  }
+
+  private installIntroAudioUnlock(): void {
+    if (this.introAudioUnlockHandler) return;
+
+    const handler: EventListener = () => {
+      this.ngZone.run(() => {
+        this.tryEnableIntroAudio();
+        if (!this.introAudioBlocked) {
+          this.removeIntroAudioUnlock();
+        }
+      });
+    };
+
+    this.introAudioUnlockHandler = handler;
+    window.addEventListener('pointerdown', handler, { passive: true });
+    window.addEventListener('keydown', handler);
+    window.addEventListener('touchstart', handler, { passive: true });
+  }
+
+  private removeIntroAudioUnlock(): void {
+    if (!this.introAudioUnlockHandler) return;
+
+    window.removeEventListener('pointerdown', this.introAudioUnlockHandler);
+    window.removeEventListener('keydown', this.introAudioUnlockHandler);
+    window.removeEventListener('touchstart', this.introAudioUnlockHandler);
+    this.introAudioUnlockHandler = null;
+  }
+
+  private tryEnableIntroAudio(): void {
+    const video = this.introVideoPlayer;
+    if (!video || this.introVideoFinished) return;
+
+    video.defaultMuted = false;
+    video.muted = false;
+    video.volume = 1;
+    this.playElement(video, true);
+  }
+
+  private maybeCompleteIntroSequence(): void {
+    if (!this.loaderFinished || !this.introVideoFinished || this.introSequenceStarted) return;
+
+    this.introSequenceStarted = true;
+    this.videoPlaying = false;
+    this.showVideoOverlay = false;
+    this.showIntroSoundPrompt = false;
+    this.thunderReveal = false;
+    this.cdr.markForCheck();
+    this.startIntro();
   }
 
   private startIntro(): void {
@@ -553,6 +661,62 @@ export class MartialArtsBirthdayComponent implements OnInit, OnDestroy {
     try { if ('vibrate' in navigator) navigator.vibrate(pattern); } catch {}
   }
 
+  // ── Play video programmatically ───────────────────────────────
+  playVideo(): void {
+    this.tryEnableIntroAudio();
+    this.syncVisibleVideo();
+  }
+
+  private playElement(video: HTMLVideoElement, allowMutedFallback = false): void {
+    const playPromise = video.play();
+    if (playPromise) {
+      playPromise.then(() => {
+        if (video === this.introVideoPlayer && !video.muted) {
+          this.ngZone.run(() => {
+            this.introAudioBlocked = false;
+            this.showIntroSoundPrompt = false;
+            this.cdr.markForCheck();
+          });
+        }
+      }).catch(() => {
+        if (allowMutedFallback && !video.muted) {
+          video.defaultMuted = true;
+          video.muted = true;
+          if (video === this.introVideoPlayer) {
+            this.ngZone.run(() => {
+              this.introAudioBlocked = true;
+              this.showIntroSoundPrompt = !this.arrivedFromWishCard && this.showVideoOverlay;
+              this.cdr.markForCheck();
+            });
+          }
+          video.play().catch(() => {});
+          return;
+        }
+
+        const retryTimer = setTimeout(() => {
+          video.play().catch(() => {});
+        }, 150);
+        this.timers.push(retryTimer);
+      });
+    }
+  }
+
+  // ── Handle video overlay click ─────────────────────────────────
+  onVideoOverlayClick(): void {
+    this.playVideo();
+  }
+
+  onIntroSoundPromptClick(event: Event): void {
+    event.stopPropagation();
+    this.tryEnableIntroAudio();
+  }
+
+  // ── Video ended handler ───────────────────────────────────────
+  onVideoEnded(): void {
+    this.introVideoFinished = true;
+    this.maybeCompleteIntroSequence();
+  }
+
   // ── CTA button also fires kick with haptics ───────────────────
   fireKickMobile(): void {
     this.vibrate(this.activeForm.hapticPattern);
@@ -567,6 +731,9 @@ export class MartialArtsBirthdayComponent implements OnInit, OnDestroy {
     if (this.longPressTimer) clearTimeout(this.longPressTimer);
     if (this.loaderProgressInterval) clearInterval(this.loaderProgressInterval);
     this.timers.forEach(clearTimeout);
+    this.removeIntroAudioUnlock();
+    this.introVideoPlayer?.pause();
+    this.introVideoPlayer = null;
     this.wakeLock?.release?.().catch(() => {});
     this.motionDetectorUnlisten?.();
   }

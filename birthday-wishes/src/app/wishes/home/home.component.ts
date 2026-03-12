@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit {
   }
 
   openWish(id: string): void {
-    this.router.navigate(['/wish', id]);
+    this.router.navigate(['/wish', id], { state: { fromWishCard: true } });
   }
 
   getOccasionIcon(type: string): string {
